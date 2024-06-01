@@ -29,7 +29,7 @@ public class AvaliacaoAMQPConfiguration {
     }
 
     @Bean
-    public Queue criaFilaPagamentoConfirmado(){ 
+    public Queue criaFilaPagamentoConfirmadoAvaliacao(){ 
         return QueueBuilder.nonDurable("pagamento.confirmado-avaliacao").build(); 
     }
 
@@ -41,7 +41,7 @@ public class AvaliacaoAMQPConfiguration {
 
     @Bean
     public Binding bindingPagamentoPedido(){
-        return BindingBuilder.bind(criaFilaPagamentoConfirmado()).to(fanoutExchange());
+        return BindingBuilder.bind(criaFilaPagamentoConfirmadoAvaliacao()).to(fanoutExchange());
     }
     
      
