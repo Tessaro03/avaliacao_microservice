@@ -1,4 +1,4 @@
-package com.avaliacao.amqp;
+package com.avaliacao.infra.amqp;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
