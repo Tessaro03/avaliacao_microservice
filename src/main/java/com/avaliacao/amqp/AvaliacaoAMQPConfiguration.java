@@ -1,12 +1,6 @@
-package com.avaliacao.infra.amqp;
+package com.avaliacao.amqp;
 
 
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -14,6 +8,9 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AvaliacaoAMQPConfiguration {
@@ -29,22 +26,14 @@ public class AvaliacaoAMQPConfiguration {
     }
 
     @Bean
-    public Queue criaFilaPagamentoConfirmadoAvaliacao(){ 
-        return QueueBuilder.nonDurable("pagamento.confirmado-avaliacao").build(); 
+    public Queue criaFilaPagamentoPedidoEntregue(){ 
+        return QueueBuilder.nonDurable("pedido.entregue").build(); 
     }
-
-     @Bean 
-    public FanoutExchange fanoutExchange() {     
-        return new FanoutExchange("pagamento.ex"); 
-    }  
-
 
     @Bean
-    public Binding bindingPagamentoPedido(){
-        return BindingBuilder.bind(criaFilaPagamentoConfirmadoAvaliacao()).to(fanoutExchange());
+    public Queue criaFilaNotaProduto(){ 
+        return QueueBuilder.nonDurable("avaliacao.produto").build(); 
     }
-    
-     
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, Jackson2JsonMessageConverter messageConverter){

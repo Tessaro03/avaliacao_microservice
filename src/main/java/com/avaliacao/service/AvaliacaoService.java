@@ -3,11 +3,15 @@ package com.avaliacao.service;
 
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.avaliacao.dtos.AvaliacaoInputDTO;
-import com.avaliacao.dtos.AvaliacaoOutputDTO;
+import com.avaliacao.dtos.avaliacao.AvaliacaoInputDTO;
+import com.avaliacao.dtos.avaliacao.AvaliacaoOutputDTO;
+import com.avaliacao.dtos.pedido.AvaliacaoPedidoDTO;
+import com.avaliacao.dtos.pedido.AvaliacaoProdutoDTO;
+import com.avaliacao.dtos.produto.NotaDTO;
 import com.avaliacao.model.Avaliacao;
 import com.avaliacao.repository.AvaliacaoRepository;
 
@@ -17,17 +21,31 @@ public class AvaliacaoService {
     @Autowired
     private AvaliacaoRepository repository;
 
-    public void criarAvaliacao(Long idPedido){
-        var avaliacao = new Avaliacao(idPedido);
-        repository.save(avaliacao);
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    public void criarAvaliacao(AvaliacaoPedidoDTO dto){
+        for (AvaliacaoProdutoDTO avaliacaoProduto : dto.produtos()) {
+            var avaliacao = new Avaliacao(avaliacaoProduto,dto.idPedido());
+            repository.save(avaliacao);
+            
+        }
     }
 
-    public void alterarAvaliacao(AvaliacaoInputDTO avaliacaoDto, long idAvaliacao){
-        var avaliacao = repository.buscarPorIdPedido(avaliacaoDto.idPedido()); 
+    public void avaliarProduto(AvaliacaoInputDTO dto){
+        var avaliacao = repository.findById(dto.idAvaliacao()); 
         if (avaliacao.isPresent()) {
-            avaliacao.get().alterar(avaliacaoDto);
+            avaliacao.get().avaliarProduto(dto);
             repository.save(avaliacao.get());
+            notaProduto(avaliacao.get());
         }
+    }
+
+    public void notaProduto(Avaliacao avaliacao){
+        List<Avaliacao> avaliacoes = repository.findAllByIdProduto(avaliacao.getIdProduto());
+        double media = avaliacoes.stream().mapToDouble(Avaliacao::getNota).average().orElse(0.0);
+        if (media > 5.0) media = 5.0 ;
+        rabbitTemplate.convertAndSend("avaliacao.produto",new NotaDTO(avaliacao.getIdProduto(), media));
     }
 
     public List<AvaliacaoOutputDTO> verAvaliacoes() {
