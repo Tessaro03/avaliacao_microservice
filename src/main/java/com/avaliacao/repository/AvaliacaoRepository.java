@@ -15,5 +15,7 @@ public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long>{
 
     @Query("SELECT a FROM Avaliacao a WHERE a.idProduto =:idProduto AND a.avaliado = true")
     public List<Avaliacao> findAllByIdProduto(Long idProduto);
+
+    
     
 }

@@ -10,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,8 +31,7 @@ public class Avaliacao {
     private LocalDateTime dataCriacao;
     private String nomeProduto;
 
-    @Min(0)
-    @Max(5)
+
     private Double nota;
     private String observacao;
     private Boolean avaliado;
