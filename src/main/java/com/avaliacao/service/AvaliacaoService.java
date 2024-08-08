@@ -14,6 +14,7 @@ import com.avaliacao.dtos.pedido.AvaliacaoProdutoDTO;
 import com.avaliacao.dtos.produto.NotaDTO;
 import com.avaliacao.model.Avaliacao;
 import com.avaliacao.repository.AvaliacaoRepository;
+import com.avaliacao.validation.ValidadorAvaliacao;
 
 @Service
 public class AvaliacaoService {
@@ -24,6 +25,9 @@ public class AvaliacaoService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private ValidadorAvaliacao validador;
+
     public void criarAvaliacao(AvaliacaoPedidoDTO dto){
         for (AvaliacaoProdutoDTO avaliacaoProduto : dto.produtos()) {
             var avaliacao = new Avaliacao(avaliacaoProduto,dto.idPedido());
@@ -33,6 +37,7 @@ public class AvaliacaoService {
     }
 
     public void avaliarProduto(AvaliacaoInputDTO dto){
+        validador.validarAlteracao(dto);
         var avaliacao = repository.findById(dto.idAvaliacao()); 
         if (avaliacao.isPresent()) {
             avaliacao.get().avaliarProduto(dto);
@@ -44,7 +49,7 @@ public class AvaliacaoService {
     public void notaProduto(Avaliacao avaliacao){
         List<Avaliacao> avaliacoes = repository.findAllByIdProduto(avaliacao.getIdProduto());
         double media = avaliacoes.stream().mapToDouble(Avaliacao::getNota).average().orElse(0.0);
-        if (media > 5.0) media = 5.0 ;
+        if (media > 5.0) media = 5.0;
         rabbitTemplate.convertAndSend("avaliacao.produto",new NotaDTO(avaliacao.getIdProduto(), media));
     }
 
