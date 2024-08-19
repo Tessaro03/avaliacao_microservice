@@ -18,6 +18,7 @@ import com.avaliacao.repository.AvaliacaoRepository;
 import com.avaliacao.validation.ValidadorAvaliacao;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 @Service
 public class AvaliacaoService {
@@ -43,10 +44,7 @@ public class AvaliacaoService {
 
     public void avaliarProduto(AvaliacaoInputDTO dto, HttpServletRequest request){
         var usuario = tokenService.extrairInformacoes(request);
-
-
         validador.validarAlteracao(dto, usuario.id());
-
         var avaliacao = repository.findById(dto.idAvaliacao()); 
         if (avaliacao.isPresent()) {
             avaliacao.get().avaliarProduto(dto);
@@ -67,5 +65,11 @@ public class AvaliacaoService {
         return avaliacoes.stream().map(AvaliacaoOutputDTO::new).toList();
     }
 
+    @Transactional
+    public void deletarAvaliacao(Long idAvaliacao, HttpServletRequest request) {
+        var usuario = tokenService.extrairInformacoes(request);
+        validador.validarDelete(idAvaliacao, usuario.id());
+        repository.deleteById(idAvaliacao);
+    }
 
 }

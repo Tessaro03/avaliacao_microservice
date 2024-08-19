@@ -21,6 +21,11 @@ public class ValidadorAvaliacao {
     public void validarAlteracao(AvaliacaoInputDTO dto, Long idCliente){
         validadorId.forEach(v -> v.validar(dto.idAvaliacao(), idCliente));
         validadorAlteraracao.forEach(v -> v.validar(dto));
-
     }
+
+    public void validarDelete(Long idAvaliacao, Long idCliente) {
+        validadorId.forEach(v -> v.validar(idAvaliacao, idCliente));
+    }
+
+
 }

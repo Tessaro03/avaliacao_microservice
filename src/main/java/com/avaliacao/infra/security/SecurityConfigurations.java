@@ -27,10 +27,12 @@ public class SecurityConfigurations {
             
             RequestMatcher matcher = new AntPathRequestMatcher("/avaliacao", HttpMethod.PATCH.name());
             RequestMatcher matcher2 = new AntPathRequestMatcher("/avaliacao", HttpMethod.GET.name());
-     
+            RequestMatcher matcher3 = new AntPathRequestMatcher("/avaliacao/{id}", HttpMethod.DELETE.name());
+
             req.requestMatchers(matcher).hasRole("CLIENTE");
             req.requestMatchers(matcher2).permitAll();
-            
+            req.requestMatchers(matcher3).hasRole("CLIENTE");
+
             req.anyRequest().authenticated();
         })
         .addFilterBefore(securityFilter, SecurityContextPersistenceFilter.class)
