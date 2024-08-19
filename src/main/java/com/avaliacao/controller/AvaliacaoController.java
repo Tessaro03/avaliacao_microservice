@@ -12,6 +12,7 @@ import com.avaliacao.dtos.avaliacao.AvaliacaoInputDTO;
 import com.avaliacao.service.AvaliacaoService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/avaliacao")
@@ -30,8 +31,8 @@ public class AvaliacaoController {
 
     @PatchMapping()
     @Operation(summary = "Avaliar Produto")
-    public void avaliarProduto(@RequestBody AvaliacaoInputDTO dto ){
-        service.avaliarProduto(dto);
+    public void avaliarProduto(@RequestBody AvaliacaoInputDTO dto, HttpServletRequest request){
+        service.avaliarProduto(dto, request);
     }
 
 }

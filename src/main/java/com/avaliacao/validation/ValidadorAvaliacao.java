@@ -18,8 +18,8 @@ public class ValidadorAvaliacao {
     @Autowired
     private List<ValidadorId> validadorId;
     
-    public void validarAlteracao(AvaliacaoInputDTO dto){
-        validadorId.forEach(v -> v.validar(dto.idAvaliacao()));
+    public void validarAlteracao(AvaliacaoInputDTO dto, Long idCliente){
+        validadorId.forEach(v -> v.validar(dto.idAvaliacao(), idCliente));
         validadorAlteraracao.forEach(v -> v.validar(dto));
 
     }

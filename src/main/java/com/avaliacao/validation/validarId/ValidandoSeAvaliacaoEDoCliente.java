@@ -7,15 +7,17 @@ import com.avaliacao.infra.exceptions.ValidacaoException;
 import com.avaliacao.repository.AvaliacaoRepository;
 
 @Service
-public class ValidandoSeIdExiste implements ValidadorId {
+public class ValidandoSeAvaliacaoEDoCliente implements  ValidadorId{
+
 
     @Autowired
     private AvaliacaoRepository repository;
 
     @Override
     public void validar(Long id, Long idCliente) {
-        if (!repository.existsById(id)) {
-            throw new ValidacaoException("Id não existe");
+        var avaliacao = repository.findById(id);
+        if (avaliacao.isPresent() && !avaliacao.get().getIdCliente().equals(idCliente)) {
+            throw new ValidacaoException("Avaliação não pertence a esse usuário");
         }
     }
     

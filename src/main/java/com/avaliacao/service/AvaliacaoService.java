@@ -12,9 +12,12 @@ import com.avaliacao.dtos.avaliacao.AvaliacaoOutputDTO;
 import com.avaliacao.dtos.pedido.AvaliacaoPedidoDTO;
 import com.avaliacao.dtos.pedido.AvaliacaoProdutoDTO;
 import com.avaliacao.dtos.produto.NotaDTO;
+import com.avaliacao.infra.security.TokenService;
 import com.avaliacao.model.Avaliacao;
 import com.avaliacao.repository.AvaliacaoRepository;
 import com.avaliacao.validation.ValidadorAvaliacao;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AvaliacaoService {
@@ -28,16 +31,22 @@ public class AvaliacaoService {
     @Autowired
     private ValidadorAvaliacao validador;
 
+    @Autowired
+    private TokenService tokenService;
+
     public void criarAvaliacao(AvaliacaoPedidoDTO dto){
         for (AvaliacaoProdutoDTO avaliacaoProduto : dto.produtos()) {
-            var avaliacao = new Avaliacao(avaliacaoProduto,dto.idPedido());
+            var avaliacao = new Avaliacao(avaliacaoProduto,dto.idPedido(), dto.idCliente());
             repository.save(avaliacao);
-            
         }
     }
 
-    public void avaliarProduto(AvaliacaoInputDTO dto){
-        validador.validarAlteracao(dto);
+    public void avaliarProduto(AvaliacaoInputDTO dto, HttpServletRequest request){
+        var usuario = tokenService.extrairInformacoes(request);
+
+
+        validador.validarAlteracao(dto, usuario.id());
+
         var avaliacao = repository.findById(dto.idAvaliacao()); 
         if (avaliacao.isPresent()) {
             avaliacao.get().avaliarProduto(dto);
