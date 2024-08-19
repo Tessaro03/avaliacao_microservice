@@ -11,6 +11,9 @@ import jakarta.validation.constraints.NotNull;
    @NotNull
    Long idPedido,
    
+   @NotNull
+   Long idCliente,
+
    @NotEmpty
    List<AvaliacaoProdutoDTO> produtos
 

@@ -28,6 +28,7 @@ public class Avaliacao {
     private Long id;
     private Long idPedido;
     private Long idProduto;
+    private Long idCliente;
     private LocalDateTime dataCriacao;
     private String nomeProduto;
 
@@ -36,8 +37,9 @@ public class Avaliacao {
     private String observacao;
     private Boolean avaliado;
 
-    public Avaliacao(AvaliacaoProdutoDTO dto, Long idPedido) {
+    public Avaliacao(AvaliacaoProdutoDTO dto, Long idPedido, long idCliente) {
         this.idPedido = idPedido;
+        this.idCliente = idCliente;
         this.idProduto = dto.idProduto();
         this.nomeProduto = dto.nome();
         this.dataCriacao = LocalDateTime.now();
