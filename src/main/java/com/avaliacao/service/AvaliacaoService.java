@@ -45,13 +45,25 @@ public class AvaliacaoService {
     public void avaliarProduto(AvaliacaoInputDTO dto, HttpServletRequest request){
         var usuario = tokenService.extrairInformacoes(request);
         validador.validarAlteracao(dto, usuario.id());
+
         var avaliacao = repository.findById(dto.idAvaliacao()); 
         if (avaliacao.isPresent()) {
-            avaliacao.get().avaliarProduto(dto);
-            repository.save(avaliacao.get());
+            definirAvalicao(avaliacao.get(),dto);
             notaProduto(avaliacao.get());
         }
     }
+    
+    public void definirAvalicao(Avaliacao avaliacao,AvaliacaoInputDTO dto) {
+        if (dto.nota() != null) {
+            avaliacao.setNota(dto.nota());
+            avaliacao.setAvaliado(true);
+            if (dto.observacao() != null) {
+                avaliacao.setObservacao(dto.observacao());
+            }
+        }   
+        repository.save(avaliacao);
+    }
+
 
     public void notaProduto(Avaliacao avaliacao){
         List<Avaliacao> avaliacoes = repository.findAllByIdProduto(avaliacao.getIdProduto());

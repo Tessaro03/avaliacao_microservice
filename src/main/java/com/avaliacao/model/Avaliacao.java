@@ -47,15 +47,6 @@ public class Avaliacao {
         
     }
 
-    public void avaliarProduto(AvaliacaoInputDTO dto) {
-        if (dto.nota() != null) {
-            this.nota = dto.nota();
-            this.avaliado = true;
-        }
-        if (dto.observacao() != null) {
-            this.observacao = dto.observacao();
-        }
-    }
 
 
 
